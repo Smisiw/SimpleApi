@@ -20,6 +20,9 @@ import ru.projects.simpleapi.model.User;
 import ru.projects.simpleapi.repository.UserRepository;
 import ru.projects.simpleapi.security.JwtCore;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -40,7 +43,9 @@ public class SecurityController {
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtCore.generateToken(authentication);
-        return ResponseEntity.ok(jwt);
+        Map<String, String> response = new HashMap<>();
+        response.put("token", jwt);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")
