@@ -29,6 +29,8 @@ public class SecurityConfiguration {
 
     public static final String SIGN_IN_ENTRY_POINT = "/auth/signin";
     public static final String SIGN_UP_ENTRY_POINT = "/auth/signup";
+    private static final String[] SWAGGER_WHITE_LIST = { "/api/v1/auth/**", "/v2/api-docs", "/v3/api-docs",
+            "/v3/api-docs/**", "/swagger-resources", "/swagger-resources/**", "/swagger-ui/**", "/swagger-ui.html" };
     private final UserService userService;
     private final TokenFilter tokenFilter;
 
@@ -64,6 +66,7 @@ public class SecurityConfiguration {
                 ).authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(SIGN_IN_ENTRY_POINT).permitAll()
                         .requestMatchers(SIGN_UP_ENTRY_POINT).permitAll()
+                        .requestMatchers(SWAGGER_WHITE_LIST).permitAll()
                         .anyRequest().fullyAuthenticated()
                 ).addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
 
