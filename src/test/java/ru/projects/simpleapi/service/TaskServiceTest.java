@@ -5,7 +5,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import ru.projects.simpleapi.model.Task;
 import ru.projects.simpleapi.model.TaskStatus;
 import ru.projects.simpleapi.repository.TaskRepository;
@@ -31,10 +30,10 @@ public class TaskServiceTest {
         LocalDateTime now = LocalDateTime.now();
         Task task = new Task(1L, "Test task", "Description", 1, TaskStatus.NEW, now);
         when(taskRepository.findById(1L)).thenReturn(Optional.of(task));
-        ResponseEntity<Task> result = taskService.findById(1L);
+        Task result = taskService.findById(1L);
 
         assertNotNull("", result);
-        assertEquals("", "Test task", result.getBody().getTitle());
+        assertEquals("", "Test task", result.getTitle());
         verify(taskRepository, times(1)).findById(1L);
     }
 }

@@ -1,6 +1,7 @@
 package ru.projects.simpleapi.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,26 +19,27 @@ public class TaskController {
 
     @PostMapping
     public ResponseEntity<Task> createTask(@RequestBody @Validated TaskDTO taskDTO) {
-        return taskService.createTask(taskDTO);
+        return new ResponseEntity<>(taskService.createTask(taskDTO), HttpStatus.CREATED);
     }
 
     @GetMapping
     public ResponseEntity<List<Task>> getAllTasks() {
-        return taskService.findAll();
+        return new ResponseEntity<>(taskService.findAll(), HttpStatus.OK);
     }
 
     @GetMapping(path = "{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable(name = "id") Long id) {
-        return taskService.findById(id);
+        return new ResponseEntity<>(taskService.findById(id), HttpStatus.OK);
     }
 
     @PutMapping(path = "{id}")
     public ResponseEntity<Task> updateTask(@PathVariable(name = "id") Long id, @RequestBody @Validated TaskDTO taskDTO) {
-        return taskService.updateTask(id, taskDTO);
+        return new ResponseEntity<>(taskService.updateTask(id, taskDTO), HttpStatus.OK);
     }
 
     @DeleteMapping(path = "{id}")
     public ResponseEntity<?> deleteTaskById(@PathVariable(name = "id") Long id) {
-        return taskService.deleteTask(id);
+        taskService.deleteTask(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -1,8 +1,8 @@
 package ru.projects.simpleapi.service;
 
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import ru.projects.simpleapi.dto.TaskDTO;
 import ru.projects.simpleapi.model.Task;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public class TaskService {
     private final TaskRepository taskRepository;
 
-    public ResponseEntity<Task> createTask(TaskDTO taskDTO) {
+    public Task createTask(TaskDTO taskDTO) {
         Task task = Task.builder()
                 .title(taskDTO.getTitle())
                 .description(taskDTO.getDescription())
@@ -24,23 +24,25 @@ public class TaskService {
                 .status(taskDTO.getStatus())
                 .date(taskDTO.getDate())
                 .build();
-        taskRepository.save(task);
-        return new ResponseEntity<>(task, HttpStatus.CREATED);
+        return taskRepository.save(task);
     }
 
-    public ResponseEntity<List<Task>> findAll() {
-        return new ResponseEntity<>(taskRepository.findAll(), HttpStatus.OK);
+    @Cacheable(value = "taskList", unless = "#result == null or #result.isEmpty()")
+    public List<Task> findAll() {
+        return taskRepository.findAll();
     }
 
-    public ResponseEntity<Task> findById(Long id) {
+    @Cacheable(value = "tasks", key = "#id", unless = "#result == null")
+    public Task findById(Long id) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()){
             throw new IllegalStateException("Задача с id = " + id + " не найдена");
         }
-        return new ResponseEntity<>(optionalTask.get(), HttpStatus.OK);
+        return optionalTask.get();
     }
 
-    public ResponseEntity<Task> updateTask(Long id, TaskDTO task) {
+    @CacheEvict(value = "tasks", key = "#id")
+    public Task updateTask(Long id, TaskDTO task) {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
             throw new IllegalStateException("Задача с id = " + id + " не найдена");
@@ -51,11 +53,11 @@ public class TaskService {
         updatedTask.setPriority(task.getPriority());
         updatedTask.setStatus(task.getStatus());
         updatedTask.setDate(task.getDate());
-        return new ResponseEntity<>(taskRepository.save(updatedTask), HttpStatus.OK);
+        return taskRepository.save(updatedTask);
     }
 
-    public ResponseEntity<?> deleteTask(Long id) {
+    @CacheEvict(value = "tasks", key = "#id")
+    public void deleteTask(Long id) {
         taskRepository.deleteById(id);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
