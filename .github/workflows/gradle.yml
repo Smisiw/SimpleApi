@@ -23,10 +23,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
       - name: Остановка и удаление контейнеров
-        run: docker-compose down -v
+        run: docker compose down -v
 
       - name: Запуск сборки и деплоя
-        run: docker-compose up --build -d
+        run: docker compose up --build -d
 
       - name: Сборка Docker-образа
         run: docker build -t ${{ secrets.DOCKER_USERNAME }}/simple-api .
