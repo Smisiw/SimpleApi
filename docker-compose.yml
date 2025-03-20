@@ -22,7 +22,7 @@ services:
 
   app:
     build: .
-    image: axterium/simpleapi
+    image: axterium/simple-api
     container_name: simple_api_container
     depends_on:
       - db
