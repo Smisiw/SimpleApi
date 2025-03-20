@@ -19,6 +19,20 @@ jobs:
           distribution: 'temurin'
           java-version: 17
 
+      - name: Логин в Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Остановка и удаление контейнеров
+        run: docker-compose down -v
+
+      - name: Запуск сборки и деплоя
+        run: docker-compose up --build -d
+
+      - name: Сборка Docker-образа
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/simple-api .
+      - name: Пуш в Docker Hub
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/simple-api
+
       - name: Кеширование зависимостей Gradle
         uses: actions/cache@v3
         with:
@@ -31,15 +45,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-
-      - name: Логин в Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Сборка Docker-образа
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/simple-api .
-
-      - name: Пуш в Docker Hub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/simple-api
 
 #      - name: Разворачивание на сервере (по SSH)
 #        uses: appleboy/ssh-action@v0.1.10
