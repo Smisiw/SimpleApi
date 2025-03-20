@@ -7,9 +7,9 @@ services:
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: simpleapi
+      POSTGRES_DB: simple_api_db
     ports:
-      - "5432:5432"
+      - "5431:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -28,7 +28,7 @@ services:
       - db
       - redis
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/simpleapi
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/simple_api_db
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_REDIS_HOST: redis
