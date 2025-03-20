@@ -26,9 +26,6 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle
 
-      - name: Сборка проекта с Gradle
-        run: ./gradlew build --no-daemon
-
       - name: Установка Docker Compose
         run: sudo apt-get update && sudo apt-get install -y docker-compose
 
